@@ -22,7 +22,7 @@ CLOUD_FILTER = 20  # Permitir mais nuvens para garantir mais imagens
 NUM_BEST_IMAGES = 5  # Número de melhores imagens a serem utilizadas para a composição ponderada
 
 # Região de interesse
-ROI = ee.Geometry.Rectangle([-39.0, -9.0, -38.5, -8.5])  # Quadrado perfeito
+ROI = ee.Geometry.Rectangle([-123.0, 49.0, -122.5, 49.5])  # Quadrado perfeito
 
 # Classes de NDVI
 NDVI_CLASSES = {
