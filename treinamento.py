@@ -1,4 +1,4 @@
-# Instalar dependências:
+# Instalar dependências, use Python 3.10:
 # pip install earthengine-api tensorflow matplotlib seaborn scikit-learn pillow requests numpy
 
 # Imports
