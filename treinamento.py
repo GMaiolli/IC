@@ -1,4 +1,4 @@
-# Instalar dependências, use Python 3.10:
+# Instalar dependências:
 # pip install earthengine-api tensorflow matplotlib seaborn scikit-learn pillow requests numpy
 
 # Imports
@@ -26,17 +26,36 @@ plt.ion()  # Modo interativo
 SAVE_DIR = './results'
 os.makedirs(SAVE_DIR, exist_ok=True)
 
-# Inicializar Earth Engine com autenticação via browser
+# Inicializar Earth Engine com autenticação via link (igual ao Colab)
 def initialize_earth_engine():
     try:
+        # Tentar inicializar sem projeto primeiro (caso já tenha um padrão)
         ee.Initialize()
         print("✅ Earth Engine já está autenticado")
     except Exception as e:
-        print("🔐 Iniciando autenticação do Earth Engine...")
-        print("Uma janela do navegador será aberta para autenticação")
-        ee.Authenticate()
-        ee.Initialize()
-        print("✅ Earth Engine autenticado com sucesso!")
+        try:
+            print("🔐 Iniciando autenticação do Earth Engine...")
+            print("Siga as instruções abaixo para autenticação:")
+            ee.Authenticate()
+            
+            # Tentar inicializar sem projeto
+            ee.Initialize()
+            print("✅ Earth Engine autenticado com sucesso!")
+        except Exception as e2:
+            try:
+                # Se falhar, usar um projeto padrão do Earth Engine
+                print("🔧 Configurando projeto padrão...")
+                ee.Initialize(project='ndvi-analysis-455514')
+                print("✅ Earth Engine autenticado com projeto padrão!")
+            except Exception as e3:
+                # Última tentativa: pedir para o usuário criar um projeto
+                print("❌ Erro na inicialização do Earth Engine.")
+                print("📋 Você precisa de um projeto no Google Cloud Platform.")
+                print("🔗 Visite: https://console.cloud.google.com/")
+                print("1. Crie um novo projeto (ou use um existente)")
+                print("2. Ative a Earth Engine API")
+                print("3. Execute o código novamente")
+                raise e3
 
 # Parâmetros
 START_DATE = '2022-01-01'
@@ -61,22 +80,23 @@ NDVI_CLASSES = {
     5: {'nome': 'Alta', 'limiar': [0.7, 1.0], 'cor': 'darkgreen'}
 }
 
-# Regiões de interesse para treinamento
-ROIs = [
-    ee.Geometry.Rectangle([-48.0, -16.0, -47.5, -15.5]),
-    ee.Geometry.Rectangle([-60.0, -3.0, -59.5, -2.5]),
-    ee.Geometry.Rectangle([-39.0, -9.0, -38.5, -8.5]),
-    ee.Geometry.Rectangle([-57.0, -17.0, -56.5, -16.5]),
-    ee.Geometry.Rectangle([-46.0, -23.0, -45.5, -22.5]),
-    ee.Geometry.Rectangle([-53.0, -31.0, -52.5, -30.5]),
-    ee.Geometry.Rectangle([-43.3, -22.95, -43.2, -22.85]),
-    ee.Geometry.Rectangle([-123.0, 49.0, -122.5, 49.5]),
-    ee.Geometry.Rectangle([23.0, 19.0, 23.5, 19.5]),
-    ee.Geometry.Rectangle([100.0, 0.5, 100.5, 1.0]),
-    ee.Geometry.Rectangle([30.0, -2.0, 30.5, -1.5]),
-    ee.Geometry.Rectangle([135.0, -33.0, 135.5, -32.5]),
-    ee.Geometry.Rectangle([5.0, 52.0, 5.5, 52.5])
-]
+# Função para criar as ROIs (será chamada após inicialização do EE)
+def create_rois():
+    return [
+        ee.Geometry.Rectangle([-48.0, -16.0, -47.5, -15.5]),
+        ee.Geometry.Rectangle([-60.0, -3.0, -59.5, -2.5]),
+        ee.Geometry.Rectangle([-39.0, -9.0, -38.5, -8.5]),
+        ee.Geometry.Rectangle([-57.0, -17.0, -56.5, -16.5]),
+        ee.Geometry.Rectangle([-46.0, -23.0, -45.5, -22.5]),
+        ee.Geometry.Rectangle([-53.0, -31.0, -52.5, -30.5]),
+        ee.Geometry.Rectangle([-43.3, -22.95, -43.2, -22.85]),
+        ee.Geometry.Rectangle([-123.0, 49.0, -122.5, 49.5]),
+        ee.Geometry.Rectangle([23.0, 19.0, 23.5, 19.5]),
+        ee.Geometry.Rectangle([100.0, 0.5, 100.5, 1.0]),
+        ee.Geometry.Rectangle([30.0, -2.0, 30.5, -1.5]),
+        ee.Geometry.Rectangle([135.0, -33.0, 135.5, -32.5]),
+        ee.Geometry.Rectangle([5.0, 52.0, 5.5, 52.5])
+    ]
 
 # Funções para calcular índices
 def calculate_ndvi(img):
@@ -127,7 +147,7 @@ def save_and_show_image(url, title, save_to_disk=True):
         return None
 
 # Função para visualizar uma região de treinamento específica
-def visualize_training_region(roi_index):
+def visualize_training_region(roi_index, ROIs):
     roi = ROIs[roi_index]
 
     print(f"🔍 Visualizando região de treinamento {roi_index}...")
@@ -226,7 +246,7 @@ def create_cnn(input_shape, classes):
     return model
 
 # Função para coletar amostras e treinar o modelo
-def collect_samples_and_train():
+def collect_samples_and_train(ROIs):
     print("🚀 Iniciando coleta de amostras para treinamento...")
 
     # Lista para armazenar amostras
@@ -423,15 +443,18 @@ def run_training():
     # Inicializar Earth Engine
     initialize_earth_engine()
     
+    # Criar ROIs após inicialização
+    ROIs = create_rois()
+    
     print("\n🔍 Visualizando região de exemplo antes do treinamento...")
     # Visualizar uma região de exemplo antes do treinamento
-    visualize_training_region(2)  # Mostra a região 2 (índice 2, que corresponde à 3ª região na lista)
+    visualize_training_region(2, ROIs)  # Mostra a região 2 (índice 2, que corresponde à 3ª região na lista)
     
     input("\n⏸️ Pressione Enter para continuar com o treinamento após ver as imagens...")
 
     # Treinar o modelo
     print("\n🎯 Iniciando processo de treinamento...")
-    model = collect_samples_and_train()
+    model = collect_samples_and_train(ROIs)
 
     print("\n" + "=" * 50)
     print("✅ TREINAMENTO COMPLETO!")
