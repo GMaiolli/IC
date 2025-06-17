@@ -1,0 +1,13 @@
+streamlit
+earthengine-api
+tensorflow
+matplotlib
+seaborn
+scikit-learn
+pillow
+requests
+numpy
+pandas
+folium
+streamlit-folium
+aiohttp

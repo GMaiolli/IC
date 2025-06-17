@@ -22,45 +22,6 @@ import os
 # Configurar matplotlib para mostrar em janelas separadas
 plt.ion()  # Modo interativo
 
-# Função para detectar e configurar aceleração de hardware automaticamente
-def setup_gpu_acceleration():
-    print("🔍 Detectando aceleração de hardware disponível...")
-    
-    # Tentar detectar GPUs NVIDIA (CUDA)
-    try:
-        gpus = tf.config.list_physical_devices('GPU')
-        if gpus:
-            print(f"🟢 NVIDIA GPU detectada: {len(gpus)} dispositivo(s)")
-            # Configurar crescimento de memória
-            for gpu in gpus:
-                tf.config.experimental.set_memory_growth(gpu, True)
-            print("✅ CUDA configurado com crescimento dinâmico de memória")
-            return "NVIDIA_CUDA"
-    except Exception as e:
-        print(f"⚠️ CUDA não disponível: {e}")
-    
-    # Verificar se DirectML está disponível (AMD/Intel)
-    try:
-        # DirectML funciona automaticamente se instalado
-        if hasattr(tf.config, 'experimental') and hasattr(tf.config.experimental, 'list_physical_devices'):
-            devices = tf.config.experimental.list_physical_devices()
-            if any('DML' in str(device) for device in devices):
-                print("🟡 AMD/Intel GPU detectada (DirectML)")
-                print("✅ DirectML configurado automaticamente")
-                return "AMD_DIRECTML"
-    except Exception as e:
-        print(f"⚠️ DirectML não disponível: {e}")
-    
-    # Fallback para CPU
-    print("🔴 Usando CPU - será mais lento mas funcionará")
-    print("💡 Para acelerar:")
-    print("   • NVIDIA: pip install tensorflow[and-cuda]")
-    print("   • AMD: pip install tensorflow-directml")
-    return "CPU"
-
-# Configurar aceleração
-acceleration_type = setup_gpu_acceleration()
-
 # Criar diretório para salvar dados localmente
 SAVE_DIR = './results'
 os.makedirs(SAVE_DIR, exist_ok=True)
