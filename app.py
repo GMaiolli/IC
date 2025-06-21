@@ -430,6 +430,8 @@ def classify_ndvi_with_thresholds(ndvi_values: np.ndarray) -> np.ndarray:
     classified[water_mask] = NDVIClasses.WATER_CLASS
     
     return classified
+
+def calculate_health_score(class_counts: Dict[int, int]) -> Tuple[Optional[float], str]:
     """Calcula o índice de saúde da vegetação"""
     health_scores = {
         0: 0.0,    # Solo exposto
