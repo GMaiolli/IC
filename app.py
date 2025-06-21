@@ -156,9 +156,9 @@ st.markdown(f"""
 def initialize_earth_engine():
     """Inicializa o Earth Engine com autenticação - VERSÃO CORRIGIDA"""
     try:
-        # Tentar inicializar sem projeto primeiro
-        ee.Initialize()
-        print("✅ Earth Engine já está autenticado")
+        # Forçar inicialização com seu projeto específico
+        ee.Initialize(project='ndvi-analysis-455514')
+        print("✅ Earth Engine autenticado com projeto específico!")
         return True
     except Exception as e:
         try:
@@ -168,59 +168,33 @@ def initialize_earth_engine():
             # Fazer autenticação
             ee.Authenticate()
             
-            # Tentar inicializar sem projeto específico
-            ee.Initialize()
-            print("✅ Earth Engine autenticado com sucesso!")
+            # SEMPRE usar seu projeto específico
+            ee.Initialize(project='ndvi-analysis-455514')
+            print("✅ Earth Engine autenticado com projeto específico!")
             return True
             
         except Exception as e2:
-            try:
-                # Tentar com projeto específico se disponível
-                print("🔧 Tentando com projeto específico...")
-                ee.Initialize(project='ndvi-analysis-455514')
-                print("✅ Earth Engine autenticado com projeto específico!")
-                return True
-                
-            except Exception as e3:
-                print("❌ Erro na inicialização do Earth Engine.")
-                print("📋 Soluções possíveis:")
-                print("1. Acesse: https://code.earthengine.google.com/")
-                print("2. Faça login com sua conta Google")
-                print("3. Aceite os termos de uso do Earth Engine")
-                print("4. Tente executar novamente")
-                print("\nOU")
-                print("1. Acesse: https://console.cloud.google.com/")
-                print("2. Crie um projeto Google Cloud")
-                print("3. Ative a Earth Engine API")
-                print("4. Configure as permissões necessárias")
-                
-                # Mostrar erro na interface Streamlit
-                st.error("❌ Erro ao inicializar Google Earth Engine")
-                st.error(f"Detalhes: {str(e3)}")
-                
-                with st.expander("🔧 Como resolver este erro"):
-                    st.markdown("""
-                    **Opção 1 - Mais simples:**
-                    1. Acesse: https://code.earthengine.google.com/
-                    2. Faça login com sua conta Google
-                    3. Aceite os termos de uso do Earth Engine
-                    4. Reinicie esta aplicação
-                    
-                    **Opção 2 - Projeto próprio:**
-                    1. Acesse: https://console.cloud.google.com/
-                    2. Crie um novo projeto
-                    3. Ative a Earth Engine API
-                    4. Configure as permissões necessárias
-                    5. Use o ID do seu projeto
-                    
-                    **Opção 3 - Reautenticar:**
-                    1. Abra terminal/prompt
-                    2. Execute: `earthengine authenticate`
-                    3. Siga as instruções
-                    4. Reinicie esta aplicação
-                    """)
-                
-                return False
+            print("❌ Erro na inicialização do Earth Engine.")
+            print("📋 Soluções possíveis:")
+            print("1. Acesse: https://code.earthengine.google.com/")
+            print("2. Faça login com sua conta Google")
+            print("3. Aceite os termos de uso do Earth Engine")
+            print("4. Tente executar novamente")
+            
+            # Mostrar erro na interface Streamlit
+            st.error("❌ Erro ao inicializar Google Earth Engine")
+            st.error(f"Detalhes: {str(e2)}")
+            
+            with st.expander("🔧 Como resolver este erro"):
+                st.markdown("""
+                **Reautentique com seu projeto:**
+                1. Abra terminal/prompt
+                2. Execute: `py -3.10 -c "import ee; ee.Authenticate(); ee.Initialize(project='ndvi-analysis-455514')"`
+                3. Siga as instruções de autenticação
+                4. Reinicie esta aplicação
+                """)
+            
+            return False
 
 # Tentar inicializar Earth Engine
 EE_INITIALIZED = initialize_earth_engine()
