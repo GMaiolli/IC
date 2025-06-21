@@ -1,7 +1,3 @@
-# Instalar dependências:
-# pip install earthengine-api tensorflow matplotlib seaborn scikit-learn pillow requests numpy
-
-# Imports
 import ee
 import numpy as np
 import tensorflow as tf
@@ -68,7 +64,7 @@ BATCH_SIZE = 32
 EPOCHS = 50
 LEARNING_RATE = 0.001
 VALIDATION_SPLIT = 0.2
-NUM_BEST_IMAGES = 5  # Número de melhores imagens a serem usadas para o composto
+NUM_BEST_IMAGES = 5 
 
 # Classes de NDVI
 NDVI_CLASSES = {

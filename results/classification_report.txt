@@ -1,13 +1,13 @@
               precision    recall  f1-score   support
 
-Solo exposto       0.99      0.99      0.99        80
-       Baixa       1.00      0.97      0.99        68
- Média baixa       0.97      0.98      0.97        59
-       Média       0.94      1.00      0.97        34
-  Média alta       1.00      0.95      0.97        40
-        Alta       0.99      1.00      1.00       164
-        Água       0.94      0.94      0.94        16
+Solo exposto       1.00      1.00      1.00        79
+       Baixa       0.99      1.00      0.99        68
+ Média baixa       1.00      0.98      0.99        61
+       Média       1.00      1.00      1.00        35
+  Média alta       1.00      1.00      1.00        42
+        Alta       1.00      1.00      1.00       175
+        Água       1.00      1.00      1.00        17
 
-    accuracy                           0.98       461
-   macro avg       0.98      0.98      0.98       461
-weighted avg       0.99      0.98      0.98       461
+    accuracy                           1.00       477
+   macro avg       1.00      1.00      1.00       477
+weighted avg       1.00      1.00      1.00       477
