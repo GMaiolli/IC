@@ -119,12 +119,6 @@ streamlit run app.py
 
 Acesse: `http://localhost:8501`
 
-### Modo Offline (Teste sem Internet)
-
-```bash
-# Testar modelo sem Earth Engine
-streamlit run app_offline.py
-```
 
 ## 🎮 Exemplo de Uso
 
@@ -151,7 +145,6 @@ buffer_size = 2500  # metros
 
 ```
 ├── 📄 app.py                      # Interface Streamlit principal
-├── 📄 app_offline.py              # Versão offline para testes
 ├── 📄 treinamento.py             # Script de treinamento
 ├── 📄 requirements.txt           # Dependências Python
 ├── 📁 results/                   # Resultados do treinamento
